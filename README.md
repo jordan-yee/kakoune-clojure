@@ -25,8 +25,6 @@ The core of my Kakoune setup for working in Clojure involves:
 In particular, I needed a place to put REPL-based functionality that rides on `kakoune-repl-mode` or `rep`, both of which can be used to evaluate Clojure code at the REPL.
 
 ## Usage
-Eventually, the goal is to make this installable via `plug.kak` or another plugin manager, but for now the process is manual due to the integrations with other plugins.
-
 - Clone this repo to your machine and copy the contents of the `/rc` directory into a `/custom` directory alongside your kakrc file. By default this would be: `~/.config/kak/custom`
 - Source the rc scripts in your kakrc file:
   ```kakscript

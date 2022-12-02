@@ -1,4 +1,6 @@
 # Custom commands for working with Clojure code
+#
+# NOTE: Some commands depend on the `kakoune-repl-mode` plugin!
 
 define-command -override clone-buffer \
 -docstring 'Edit a copy of the current file in a new buffer (unsaved).' \

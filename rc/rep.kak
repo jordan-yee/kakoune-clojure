@@ -105,8 +105,10 @@ define-command \
     }
 }
 
-declare-user-mode rep
-map -docstring 'rep mode' global user e ': enter-user-mode rep<ret>'
-map -docstring 'evaluate the selection in the REPL' global rep e ': rep-evaluate-selection<ret>'
-map -docstring 'evaluate this file in the REPL'     global rep f ': rep-evaluate-file<ret>'
-map -docstring 'replace selection with result'      global rep R ': rep-replace-selection<ret>'
+define-command rep-register-default-mappings %{
+    declare-user-mode rep
+    map -docstring 'rep mode' global user e ': enter-user-mode rep<ret>'
+    map -docstring 'evaluate the selection in the REPL' global rep e ': rep-evaluate-selection<ret>'
+    map -docstring 'evaluate this file in the REPL'     global rep f ': rep-evaluate-file<ret>'
+    map -docstring 'replace selection with result'      global rep R ': rep-replace-selection<ret>'
+}

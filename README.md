@@ -31,6 +31,10 @@ In particular, I needed a place to put REPL-based functionality that rides on `k
   source "%val{config}/custom/clojure.kak"
   source "%val{config}/custom/rep.kak"
   ```
+- Enable default repl mappings:
+  ```kakscript
+  rep-register-default-mappings
+  ```
 - With `clojure.kak` sourced, you can update `kakoune-repl-mode` configuration with some new commands/mappings. Example config using `plug.kak`:
   ```kakscript
   plug "jordan-yee/kakoune-repl-mode" config %{

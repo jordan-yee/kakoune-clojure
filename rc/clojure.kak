@@ -78,6 +78,53 @@ The resulting expression is saved to the <c> register." %{
     clojure-make-repl-command %arg{1} "''%reg{n}"
 }
 
+define-command -override clojure-edit-test-namespace -params ..1 \
+-docstring "clojure-edit-test-namespace [<switches>]:
+Open a buffer to the current namespace's test file, creating it if it doesn't
+already exist.
+
+Switches:
+    -new  open buffer in a new client
+
+Determines the filepath for the test namespace using the standard convention of
+a test directory that mirrors the source directory." %{
+    evaluate-commands %sh{
+        src_file_dir=$(dirname "$kak_buffile")
+        test_file_dir=$(echo "$src_file_dir" | sed 's/src/test/')
+        src_file_name=$(basename "$kak_buffile")
+        test_file_name="${src_file_name%.*}_test.${src_file_name##*.}"
+        test_filepath="$test_file_dir/$test_file_name"
+        printf '%s\n' "echo -debug 'Calculated test file: $test_filepath'"
+
+        edit_cmd='edit'
+        if [ "$1" = "-new" ]; then
+            edit_cmd='new edit'
+        fi
+
+        if [ -f "$test_filepath" ]; then
+            printf '%s\n' "echo -debug 'Existing test file found. Editing...'"
+            printf '%s\n' "$edit_cmd $test_filepath"
+        else
+            printf '%s\n' "echo -debug 'No existing test file found. Creating...'"
+            dirpath=$(dirname "$test_filepath")
+            test_filename=$()
+
+            if [ ! -d "$dirpath" ]; then
+                printf '%s\n' "echo -debug 'Directory does not yet exist. Creating...'"
+                mkdir -p "$dirpath"
+            else
+                printf '%s\n' "echo -debug 'Directory exists...'"
+            fi
+
+            # We could possibly pre-create the test file with the desired
+            # require for the src namespace and clojure.test.
+            # For now, we'll rely on the filetype-defined contents.
+            printf '%s\n' "$edit_cmd $test_filepath"
+            printf '%s\n' "echo -debug 'New test file created.'"
+        fi
+    }
+}
+
 # ------------------------------------------------------------------------------
 # repl-mode integration
 

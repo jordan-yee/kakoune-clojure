@@ -42,7 +42,7 @@ define-command -override clojure-echo-current-ns \
 }
 
 define-command -override -hidden clojure-make-repl-command -params 1..2 \
--docstring "make-repl-command-expression <repl-command> [<arg>]:
+-docstring "clojure-make-repl-command <repl-command> [<arg>]:
 Creates an expression to be evaluated at the REPL.
 
 The expression will be in the following format:
@@ -62,7 +62,7 @@ The resulting expression is saved to the <c> register." %{
 }
 
 define-command -override -hidden clojure-make-namespace-repl-command -params 1 \
--docstring "make-repl-command-expression <repl-command>:
+-docstring "clojure-make-namespace-repl-command <repl-command>:
 Creates an expression to be evaluated at the REPL.
 
 The current namespace symbol (quoted) is given as the argument to the provided <repl-command>.

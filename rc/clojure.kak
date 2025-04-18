@@ -78,6 +78,28 @@ The resulting expression is saved to the <c> register." %{
     clojure-make-repl-command %arg{1} "''%reg{n}"
 }
 
+define-command -override -hidden clojure-make-template-repl-command -params 1 \
+-docstring "clojure-make-template-repl-command <template-repl-command>:
+Creates an expression to be evaluated at the REPL based on given command template.
+
+The expression will be in the following format:
+`(<template-repl-command>)`
+
+The following template placeholders can be used in `<template-repl-command>`:
+- '<sel>' replaced with the contents of the main selection.
+- '<ns>'  replaced with the current namespace symbol.
+
+The resulting expression is saved to the <c> register." %{
+    clojure-save-current-ns # saves to register n
+    evaluate-commands %sh{
+        repl_command=$(echo "$1" | sed "s/<sel>/$kak_selection/")
+        repl_command=$(echo "$repl_command" | sed "s/<ns>/$kak_main_reg_n/")
+        repl_command=$(echo "$repl_command" | sed "s/<qsym>/#'/")
+        printf "%s\n" "set-register c '($repl_command)'"
+    }
+    echo -debug "REPL command saved to <c> register: %reg{c}"
+}
+
 define-command -override clojure-edit-test-namespace -params ..1 \
 -docstring "clojure-edit-test-namespace [<switches>]:
 Open a buffer to the current namespace's test file, creating it if it doesn't
@@ -188,6 +210,42 @@ If no command is given, you will be prompted for one instead." %{
             printf "%s\n" "clojure-namespace-repl-command-prompt"
         else
             printf "%s\n" "clojure-namespace-repl-command-arg $1"
+        fi
+    }
+}
+
+# --------------------------------------
+# clojure-template-repl-command
+
+define-command -override -hidden clojure-template-repl-command-prompt \
+-docstring "INTERNAL: prompt branch for `clojure-template-repl-command`" %{
+    prompt "REPL Command: " %{
+        clojure-make-template-repl-command %val{text}
+        repl-mode-eval-text "%reg{c}"
+    }
+}
+define-command -override -hidden clojure-template-repl-command-arg -params 1 \
+-docstring "INTERNAL: arg branch for `clojure-template-repl-command`" %{
+    clojure-make-template-repl-command %arg{1}
+    repl-mode-eval-text "%reg{c}"
+}
+define-command -override clojure-template-repl-command -params ..1 \
+-docstring "clojure-template-repl-command <template-repl-command>:
+Expand and evaluate the given <template-repl-command> at the repl.
+
+An expression of the following format will be sent to the REPL window for evaluation:
+`(<expanded-template-repl-command>)`
+
+The following template placeholders can be used in `<template-repl-command>`:
+- '<sel>' replaced with the contents of the main selection.
+- '<ns>'  replaced with the current namespace symbol.
+
+If no command is given, you will be prompted for one instead." %{
+    evaluate-commands %sh{
+        if [ $# -eq 0 ]; then
+            printf "%s\n" "clojure-template-repl-command-prompt"
+        else
+            printf "%s\n" "clojure-template-repl-command-arg '$1'"
         fi
     }
 }
